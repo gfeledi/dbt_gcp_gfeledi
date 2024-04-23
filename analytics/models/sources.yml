@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: dott_raw_layer
+    config:
+      enabled: true
+    tables:
+      - name: rides_raw   
+      - name: pass_purchases_raw  

@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: rides_datamart
+    description: rides inventory
+    columns:
+        - name: ride_id
+          tests:
+            - unique
+            - not_null
+        - name: ride_day
+        - name: ride_hour
+        - name: vehicle_type
+        - name: city_name
+        - name: ride_mins
+        - name: amount_ride
+        - name: amount_pass

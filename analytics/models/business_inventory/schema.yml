@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: rides_dwh
+    description: 'rides inventory'
+    columns:
+        - name: ride_id
+          tests:
+            - unique
+            - not_null
+        - name: vehicle_id
+        - name: vehicle_type
+        - name: time_ride_start
+        - name: time_ride_end
+        - name: lng_start
+        - name: lat_start
+        - name: lat_end
+        - name: lng_end
+        - name: gross_amount
+        - name: pass_purchase_id
+        - name: city_name
+        - name: pass_purchase_id
+        - name: gross_amount
+        - name: time_purchase
+
+  - name: pass_purchases_dwh
+    description: 'pass purchases inventory'
+    columns: 
+      - name: pass_purchase_id
+        tests:
+          - unique
+          - not_null
+      - name: gross_amount
+      - name: time_purchase
+#            tests:
+#            - relationships:
+#                to: ref('carriers')
+#                field: carrier_id

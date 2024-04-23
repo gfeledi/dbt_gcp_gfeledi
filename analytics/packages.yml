@@ -1,0 +1,6 @@
+# https://docs.getdbt.com/reference/commands/deps
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.0.0
+  - package: calogica/dbt_expectations
+    version: 0.9.0
