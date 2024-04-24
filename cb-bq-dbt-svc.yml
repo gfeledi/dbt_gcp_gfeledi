@@ -8,45 +8,23 @@ steps:
   - id: 'run-deploy'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO_IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated']
+    args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO_IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated', '--set-env-vars', 'TO_EMAILS=_TO_EMAILS', '--set-env-vars', 'SENDGRID_API_KEY=_SENDGRID_API_KEY']
   - id: 'policy-binding'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['run', 'services', 'add-iam-policy-binding', '${_SERVICE}', '--region', '${_REGION}', '--member', 'serviceAccount:${_SA_ID}', '--role', 'roles/run.invoker']
-    #   # https://cloud.google.com/workflows/docs/deploy-workflows-using-cloud-build  
-    #   # Deploy the test workflow with the commit sha
-    # - id: 'Retrieve Service URL'
-    #   name: 'gcr.io/cloud-builders/gcloud:latest'
-    #   entrypoint: /bin/bash
-    #   # https://stackoverflow.com/questions/20858381/what-does-bash-c-do # pipe operator: ls -l | grep key | less
-    #   args:
-    #     - '-c'
-    #     - |
-    #       echo $(gcloud run services describe ${_SERVICE} --format 'value(status.url)'  --region ${_REGION} ) > _RUN_SERVICE_URL
-    # - id: 'deploy-workflow'
-    #   name: 'gcr.io/cloud-builders/gcloud'
-    #   # https://cloud.google.com/workflows/docs/use-environment-variables
-    #   args: ['workflows', 'deploy', '$_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA', '--location', '${_REGION}', '--source', 'wf-load-dbt-bq.yml']
-    #   # trigger
-    # - id: 'trigger-workflow'
-    #   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    #   entrypoint: gcloud
-    #   args: ['eventarc', 'triggers', 'create', 'declencheur-wf', '--location', '${_REGION}', '--service-account', '${_SA_ID}', '--destination-workflow', '$_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA', '--destination-workflow-location', '${_REGION}', '--event-filters', 'bucket=gfeledi-dott-datalake', '--event-filters', 'type=google.cloud.storage.object.v1.finalized']
-    # - id: 'policy-binding-workflow'
-    #   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    #   entrypoint: gcloud
-    #   args: ['projects', 'add-iam-policy-binding', '${_PROJECT}', '--region', '${_REGION}', '--member', 'serviceAccount:${_GS_ACC_ID}', '--role', 'roles/pubsub.publisher']
 options:
   logging: CLOUD_LOGGING_ONLY
   #logsBucket: 'gs://build_logs_ici'
+# substitutions:
+#   _REPO_IMAGE: europe-central2-docker.pkg.dev/gfeledi-dott/gfeledi-repo/bq-load-dbt-img
+#   _REGION: europe-central2
+#   _SERVICE: telecharge-dbt-bq-svc
+#   _SA_ID: create-infra@gfeledi-dott.iam.gserviceaccount.com
+#   _TO_EMAILS: "adafeledi@gmail.com"
+#   _SENDGRID_API_KEY: "maca"
+
 substitutions:
   _REPO_IMAGE: europe-central2-docker.pkg.dev/gfeledi-dott/gfeledi-repo/bq-load-dbt-img
-  _REGION: europe-central2
-  _SERVICE: telecharge-dbt-bq-svc
   _SA_ID: create-infra@gfeledi-dott.iam.gserviceaccount.com
-  _SENDGRID_API_KEY:
-# _GS_ACC_ID: service-256811100440@gs-project-accounts.iam.gserviceaccount.com
-# _WORKFLOW_NAME: telecharge-dbt-affiche-workflow
-# _PROJECT: gfeledi-dott
-# _WF_TRIGGER_NAME: declencheur-wf
-# _WF_YAML: wf-load-dbt-bq.yml 
+  _REGION: europe-central2

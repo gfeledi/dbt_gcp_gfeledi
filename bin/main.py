@@ -7,12 +7,8 @@ import google.cloud.logging
 from google.cloud import bigquery
 from google.cloud import storage
 from json2html import *
-# import json
-# from distutils.log import debug 
-# from fileinput import filename 
 from tempfile import NamedTemporaryFile
-import os
-
+import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -21,12 +17,8 @@ clientCL.setup_logging()
 clientBQ = bigquery.Client()
 clientGCS = storage.Client()
 
-import logging
-
 to_emails = os.environ.get('TO_EMAILS')
 sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
-
-
 
 app = Flask(__name__)
 # Load a GCS file into BigQuery
@@ -143,7 +135,6 @@ def run_dbt():
                             text=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT)
-    # subprocess.run(command,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     # Format the response
     response = {
         "status": result.returncode,
@@ -269,7 +260,8 @@ def notify(message):
     app.logger.info(f"Sending email to {to_emails}")
 
     message = Mail(
-        from_email='noreply@bigquery-usage-notifier.com',
+        from_email='gfeledi@icloud.com',
+        # from_email='noreply@bigquery-usage-notifier.com',
         to_emails=to_emails,
         subject='An expensive BigQuery job just completed',
         html_content=f'<html><pre>{message}</pre></html>')
