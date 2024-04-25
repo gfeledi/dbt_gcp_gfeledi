@@ -251,8 +251,8 @@ def success():
         return render_template("acknowledgement.html", name = fichier.filename)
 
 @app.route('/run_achevee') 
-def notify(message):
-
+def notify():
+    content="datamart tables are ready"
     if to_emails is None or sendgrid_api_key is None:
         app.logger.info("Email notification skipped as TO_EMAILS or SENDGRID_API_KEY is not set")
         return
@@ -264,7 +264,7 @@ def notify(message):
         # from_email='noreply@bigquery-usage-notifier.com',
         to_emails=to_emails,
         subject='An expensive BigQuery job just completed',
-        html_content=f'<html><pre>{message}</pre></html>')
+        html_content=f'<html><pre>{content}</pre></html>')
     try:
         app.logger.info(f"Email content {message}")
         sg = SendGridAPIClient(sendgrid_api_key)
