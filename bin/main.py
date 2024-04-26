@@ -210,7 +210,8 @@ def bq_data(city_name):
 @app.route("/")
 def main_route():
     # logging.warning('megy ez magatuul is!!')
-    return "to upload a file, please add to url: /upload"
+    # return "to upload a file, please add to url: /upload"
+    return render_template("index.html")   
 
 
 @app.route("/fgy", methods=['POST'])
