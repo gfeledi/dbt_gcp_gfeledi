@@ -1,7 +1,7 @@
 import os
 import subprocess
 # https://www.datacamp.com/tutorial/python-subprocess
-
+import pandas as pd
 from flask import Flask, request, render_template
 import google.cloud.logging
 from google.cloud import bigquery
@@ -161,16 +161,21 @@ def bq_info():
         FROM `dott_datamart_layer.rides_datamart` ;
     """
     clientBQ = bigquery.Client()
-    query_job = clientBQ.query(query)
-    # TODO BQ to DF
-    
-    city_names = []
-    for row in query_job:
-        city_names.append(row["city_name"])
-       
-    results = {'cities': list(set(city_names))}
-    
-    return json2html.convert(json=results)
+    try:
+        query_job = clientBQ.query(query)
+        # TODO BQ to DF
+        
+        city_names = []
+        for row in query_job:
+            city_names.append(row["city_name"])
+        
+        results = dict(zip( ["City"] * len(city_names) , city_names))
+        
+        results = {'cities': list(set(city_names))}
+        return json2html.convert(json=results)
+        # return render_template("resultats.html", table_source=results)
+    except:
+        return render_template("index.html", chapitre="Data marts are not ready yet, <br>wait for mail to access")    
     # return render_template('dott_res.html', results=results)
 
 
@@ -204,14 +209,15 @@ def bq_data(city_name):
         del res['vehicle_type']
         data[key]=res
 
-    return json2html.convert(json=data)    
+    return json2html.convert(json=data) 
+    # return render_template("resultats.html", table_source=data)
 
 
 @app.route("/")
 def main_route():
     # logging.warning('megy ez magatuul is!!')
     # return "to upload a file, please add to url: /upload"
-    return render_template("index.html")   
+    return render_template("index.html", chapitre="WELCOME to Rides and Purchases insights")   
 
 
 @app.route("/fgy", methods=['POST'])
@@ -223,7 +229,7 @@ def run_fgy():
 
 @app.route('/upload')   
 def main(): 
-    return render_template("index.html")   
+    return render_template("index.html", chapitre="WELCOME to Rides and Purchases insights")   
   
 @app.route('/success', methods = ['POST'])   
 def success():   

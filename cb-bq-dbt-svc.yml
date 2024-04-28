@@ -24,7 +24,3 @@ options:
 #   _TO_EMAILS: "adafeledi@gmail.com"
 #   _SENDGRID_API_KEY: "maca"
 
-substitutions:
-  _REPO_IMAGE: europe-central2-docker.pkg.dev/gfeledi-dott/gfeledi-repo/bq-load-dbt-img
-  _SA_ID: create-infra@gfeledi-dott.iam.gserviceaccount.com
-  _REGION: europe-central2
