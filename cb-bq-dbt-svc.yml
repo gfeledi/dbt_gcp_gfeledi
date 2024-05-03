@@ -16,7 +16,7 @@ steps:
   - id: 'workflow-deploy'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['workflows', 'deploy', '${_WORKFLOW}', --source', '${_WF_SOURCE}', '--location', '${_REGION}', '--service-account', '${_WF_SA}', '--description', 'load & dbt workflow', '--set-env-vars', 'RUN_SERVICE_URL=${_WF_SERVICE_URL}']
+    args: ['workflows', 'deploy', '${_WORKFLOW}', '--source', '${_WF_SOURCE}', '--location', '${_REGION}', '--service-account', '${_WF_SA}', '--description', 'load & dbt workflow', '--set-env-vars', 'RUN_SERVICE_URL=${_WF_SERVICE_URL}']
 options:
   logging: CLOUD_LOGGING_ONLY
   #logsBucket: 'gs://build_logs_ici'
