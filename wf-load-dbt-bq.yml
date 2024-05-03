@@ -1,0 +1,110 @@
+main:
+  steps:
+    - start:
+        assign:
+          - service_url: ${sys.get_env("RUN_SERVICE_URL")}
+          - loadServiceUrl: ${service_url + "/load"}
+          - dbtServiceUrl: ${service_url + "/dbt"}
+          - configBucket: "config_jsons_workflows"
+          - loadApiBodyFile: "seed_raw.json"
+          - dbtApiBodyFile: "dbt_cli.json"
+    - runLoad:
+        call: callLoadDbtService
+        args:
+          message: "loaded GCS to BigQuery successfully"
+          uri: ${loadServiceUrl}
+          bucket_name: ${configBucket}
+          config_file: ${loadApiBodyFile}
+          # password_id: ${password_id}
+        result: loadServiceResponse
+    - checkCondition:
+        switch:
+          - condition: ${loadServiceResponse.status  >  0}
+            next: pas_de_contenu
+        next: runDbt
+    - runDbt:
+        call: callLoadDbtService
+        args:
+          message: "using dbt, data mart is ready to inspect, using /cities"
+          uri: ${dbtServiceUrl}
+          bucket_name: ${configBucket}
+          config_file: ${dbtApiBodyFile}
+          # password_id: ${password_id}
+        result: dbtServiceResponse
+    - return_output:
+        return: ${dbtServiceResponse.result.command_output}
+    - pas_de_contenu: 
+        call: SendMail
+        args:
+          mail_to: adafeledi@gmail.com
+          mail_from: gfeledi@icloud.com
+          subject: "pas assez de contenu"
+          content: ${loadServiceResponse}
+          # secret_password: ${password_id}
+        result: MailResponse
+    - return_output_no_contenu:
+        return: ${loadServiceResponse}
+callLoadDbtService:
+  params: [message, uri, bucket_name, config_file]
+  steps:
+    - read_config_from_gcs:
+        call: http.get
+        args:
+          url: ${"https://storage.googleapis.com/download/storage/v1/b/"  +  bucket_name  +  "/o/"  +  config_file}
+          auth:
+            type: OAuth2
+          query:
+            alt: media
+        result: data_json_content
+    - sendRequest:
+        call: http.post
+        args:
+          url: ${uri}
+          headers: {Content-Type: "application/json"}
+          auth:
+            type: OIDC
+          body: ${data_json_content.body}
+        result: response
+    - sendmail:
+        call: SendMail
+        args:
+          mail_to: adafeledi@gmail.com
+          mail_from: gfeledi@icloud.com
+          subject: ${message}
+          content: ${response.body}
+          # secret_password: ${password_id}
+        result: MailResponse
+    - returnResponse:
+        return: ${response.body}
+SendMail:
+  params: [mail_to, mail_from, subject, content]
+  steps:
+    - start:
+        assign:
+          - password_id: "sendgrid_apikey_gfeledi"
+    - get_api_password:
+        call: googleapis.secretmanager.v1.projects.secrets.versions.accessString
+        args:
+          secret_id: ${password_id}
+        result: secretResult_password   
+    - send_email:
+        call: http.post
+        args:
+          url: https://api.sendgrid.com/v3/mail/send
+          headers:
+            Content-Type: "application/json"
+            # Authorization: ${"Bearer " + base64.encode(text.encode(secretResult_password))}
+            Authorization: ${"Bearer " + secretResult_password}
+          body:
+            personalizations:
+              - to:
+                  - email: ${mail_to}
+            from:
+              email: ${mail_from}
+            subject: ${subject}
+            content:
+              - type: text/plain
+                value: ${json.encode_to_string(content)}
+        result: email_result
+    - return_result:
+        return: ${email_result.body}

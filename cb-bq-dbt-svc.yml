@@ -13,14 +13,11 @@ steps:
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['run', 'services', 'add-iam-policy-binding', '${_SERVICE}', '--region', '${_REGION}', '--member', 'serviceAccount:${_SA_ID}', '--role', 'roles/run.invoker']
+  - id: 'workflow-deploy'
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['workflows', 'deploy', '${_WORKFLOW}', --source', '${_WF_SOURCE}', '--location', '${_REGION}', '--service-account', '${_WF_SA}', '--description', 'load & dbt workflow', '--set-env-vars', 'RUN_SERVICE_URL=${_WF_SERVICE_URL}']
 options:
   logging: CLOUD_LOGGING_ONLY
   #logsBucket: 'gs://build_logs_ici'
-# substitutions:
-#   _REPO_IMAGE: europe-central2-docker.pkg.dev/gfeledi-dott/gfeledi-repo/bq-load-dbt-img
-#   _REGION: europe-central2
-#   _SERVICE: telecharge-dbt-bq-svc
-#   _SA_ID: create-infra@gfeledi-dott.iam.gserviceaccount.com
-#   _TO_EMAILS: "adafeledi@gmail.com"
-#   _SENDGRID_API_KEY: "maca"
 
