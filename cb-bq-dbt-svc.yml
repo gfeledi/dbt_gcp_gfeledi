@@ -17,6 +17,10 @@ steps:
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['workflows', 'deploy', '${_WORKFLOW}', '--source', '${_WF_SOURCE}', '--location', '${_REGION}', '--service-account', '${_WF_SA}', '--description', 'load & dbt workflow', '--call-log-level', 'log-errors-only', '--set-env-vars', 'RUN_SERVICE_URL=${_WF_SERVICE_URL}']
+  - id: 'workflow-trigger'
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['eventarc', 'triggers', 'create', '${_WF_TRIGGER}', '--destination-workflow', '${_WORKFLOW}', '--destination-workflow-location', '${_REGION}', '--service-account', '${_WF_SA}', '--event-filters', 'type=google.cloud.storage.object.v1.finalized', '--event-filters', 'bucket=${_WF_TRIGGER_BUCKET}' ]
 options:
   logging: CLOUD_LOGGING_ONLY
   #logsBucket: 'gs://build_logs_ici'
