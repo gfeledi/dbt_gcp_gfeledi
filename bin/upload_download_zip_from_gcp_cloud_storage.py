@@ -28,6 +28,14 @@ client = storage.Client(
 def upload():
     source_dir = pathlib.Path(SOURCE_DIRECTORY)
 
+    # download_as_string
+    # https://cloud.google.com/python/docs/reference/storage/latest/google.cloud.storage.blob.Blob
+    # (Deprecated) Download the contents of this blob as a bytes object.
+    # Download the contents of this blob as text (not bytes). download_as_text
+    # https://docs.python.org/3/library/io.html
+    # io — Core tools for working with streams
+    # io.StringIO
+    
     archive = io.BytesIO()
     with ZipFile(archive, 'w') as zip_archive:
         for file_path in source_dir.iterdir():

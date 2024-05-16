@@ -6,8 +6,8 @@ main:
           - loadServiceUrl: ${service_url + "/load"}
           - dbtServiceUrl: ${service_url + "/dbt"}
           - configBucket: "config_jsons_workflows"
-          - loadApiBodyFile: "seed_raw.json"
-          - dbtApiBodyFile: "dbt_cli.json"
+          - loadApiBodyFile: "flask_load_raw.json"
+          - dbtApiBodyFile: "flask_dbt_cli.json"
     - runLoad:
         call: callLoadDbtService
         args:
