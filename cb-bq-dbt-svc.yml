@@ -1,14 +1,18 @@
 steps:
+  - id: 'repo-create'
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['artifacts', 'repositories', 'create', '${_REPO}', '--location', '${_REGION}','--repository-format', 'DOCKER']
   - id: 'build-from-repo'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '${_REPO_IMAGE}', '.']
+    args: ['build', '-t', '${_REPO}/${IMAGE}', '.']
   - id: 'push-build'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_REPO_IMAGE}']
+    args: ['push', '${_REPO}/${IMAGE}']
   - id: 'run-deploy'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO_IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated', '--set-env-vars', 'TO_EMAILS=_TO_EMAILS', '--set-env-vars', 'SENDGRID_API_KEY=_SENDGRID_API_KEY']
+    args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO}/${IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated', '--set-env-vars', 'TO_EMAILS=_TO_EMAILS', '--set-env-vars', 'SENDGRID_API_KEY=_SENDGRID_API_KEY']
   - id: 'policy-binding'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
