@@ -277,7 +277,7 @@ def notify():
         sg = SendGridAPIClient(sendgrid_api_key)
         response = sg.send(message)
         app.logger.info(f"Email status code {response.status_code}")
-    except Exception as e:
+    except Exception     as e:
         print(e)
 
 

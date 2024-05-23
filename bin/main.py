@@ -1,4 +1,6 @@
 import os
+import io
+from dotenv import load_dotenv
 import subprocess
 # https://www.datacamp.com/tutorial/python-subprocess
 import pandas as pd
@@ -11,6 +13,7 @@ from tempfile import NamedTemporaryFile
 import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from zipfile import ZipFile, ZipInfo
 
 clientCL = google.cloud.logging.Client()
 clientCL.setup_logging()
@@ -19,8 +22,16 @@ clientGCS = storage.Client()
 
 to_emails = os.environ.get('TO_EMAILS')
 sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+GS_DATALAKE=os.environ.get('GS_DATALAKE')
+GS_ZIP=os.environ.get('GS_ZIP')
 
 app = Flask(__name__)
+
+def list_cs_files(bucket_name, start_with='', file_ext='csv'): 
+    list_blobs = clientGCS.list_blobs(bucket_name)
+    file_list = [file.name for file in list_blobs if ((file.name.startswith(start_with)) & (os.path.splitext(file.name)[1]=='.'+file_ext)  )]
+    return file_list
+
 # Load a GCS file into BigQuery
 @app.route("/load", methods=['POST'])
 def run_load():
@@ -96,11 +107,6 @@ def run_load():
     else:
         response["status"]=2
         return response, 550
-    
-def list_cs_files(bucket_name, start_with='', file_ext='csv'): 
-    list_blobs = clientGCS.list_blobs(bucket_name)
-    file_list = [file.name for file in list_blobs if ((file.name.startswith(start_with)) & (os.path.splitext(file.name)[1]=='.'+file_ext)  )]
-    return file_list
 
 # Execute a dbt command
 @app.route("/dbt", methods=["POST"])
@@ -220,12 +226,12 @@ def main_route():
     return render_template("index.html", chapitre="WELCOME to Rides and Purchases insights")   
 
 
-@app.route("/fgy", methods=['POST'])
-def run_fgy():
-    # Parse the request data, itt a seed_raw.json a -d body
-    request_data = request.get_json()
-    # logging.warning('rovidre zarva')   
-    return request_data.get("params", {}), 200
+# @app.route("/fgy", methods=['POST'])
+# def run_fgy():
+#     # Parse the request data, itt a seed_raw.json a -d body
+#     request_data = request.get_json()
+#     # logging.warning('rovidre zarva')   
+#     return request_data.get("params", {}), 200
 
 @app.route('/upload')   
 def main(): 
@@ -277,7 +283,7 @@ def notify():
         sg = SendGridAPIClient(sendgrid_api_key)
         response = sg.send(message)
         app.logger.info(f"Email status code {response.status_code}")
-    except Exception as e:
+    except Exception     as e:
         print(e)
 
 
