@@ -1,6 +1,6 @@
 import os
 import io
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import subprocess
 # https://www.datacamp.com/tutorial/python-subprocess
 import pandas as pd
