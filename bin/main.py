@@ -243,7 +243,7 @@ def success():
         fichier = request.files['file']    
         # project_id="gfeledi-dott"
         # region="europe-central2"
-        bucket_name="gfeledi-dott-datalake"
+        bucket_name=GS_DATALAKE
         # google_clients(project_id, region, bucket_name)
         bucket = clientGCS.bucket(bucket_name)
         blob = bucket.blob(fichier.filename)
