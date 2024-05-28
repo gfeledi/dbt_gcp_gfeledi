@@ -1,8 +1,8 @@
 steps:
-  - id: 'repo-create'
-    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args: ['artifacts', 'repositories', 'create', '${_REPO}', '--location', '${_REGION}','--repository-format', 'DOCKER']
+  # - id: 'repo-create'
+  #   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   entrypoint: gcloud
+  #   args: ['artifacts', 'repositories', 'create', '${_REPO}', '--location', '${_REGION}','--repository-format', 'DOCKER']
   - id: 'build-from-repo'
     name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', '${_REPO}/${_IMAGE}', '.']
