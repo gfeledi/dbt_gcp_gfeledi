@@ -5,14 +5,14 @@ steps:
     args: ['artifacts', 'repositories', 'create', '${_REPO}', '--location', '${_REGION}','--repository-format', 'DOCKER']
   - id: 'build-from-repo'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '${_REPO}/${IMAGE}', '.']
+    args: ['build', '-t', '${_REPO}/${_IMAGE}', '.']
   - id: 'push-build'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_REPO}/${IMAGE}']
+    args: ['push', '${_REPO}/${_IMAGE}']
   - id: 'run-deploy'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO}/${IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated', 
+    args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO}/${_IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated', 
           '--set-env-vars', 'TO_EMAILS=_TO_EMAILS', '--set-env-vars', 'SENDGRID_API_KEY=_SENDGRID_API_KEY', '--set-env-vars', 'GS_DATALAKE=_GS_DATALAKE', '--set-env-vars', 'GS_ZIP=_GS_ZIP']
   - id: 'policy-binding'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
