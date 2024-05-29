@@ -3,3 +3,5 @@ Flask
 json2html
 sendgrid
 google.cloud.logging
+dbt-core 
+dbt-bigquery
