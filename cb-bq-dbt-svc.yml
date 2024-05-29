@@ -1,8 +1,4 @@
 steps:
-  # - id: 'repo-create'
-  #   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  #   entrypoint: gcloud
-  #   args: ['artifacts', 'repositories', 'create', '${_REPO}', '--location', '${_REGION}','--repository-format', 'DOCKER']
   - id: 'build-from-repo'
     name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', '${_REPO}/${_IMAGE}', '.']
@@ -26,15 +22,7 @@ steps:
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['eventarc', 'triggers', 'create', '${_WF_TRIGGER}', '--location', '${_REGION}', '--destination-workflow', '${_WORKFLOW}', '--destination-workflow-location', '${_REGION}', '--service-account', '${_WF_SA}', '--event-filters', 'type=google.cloud.storage.object.v1.finalized', '--event-filters', 'bucket=${_WF_TRIGGER_BUCKET}' ]
+images:
+  - '${_REPO}/${_IMAGE}'
 options:
   logging: CLOUD_LOGGING_ONLY
-  #logsBucket: 'gs://build_logs_ici'
-
-
-
-# steps:
-# - name: 'gcr.io/cloud-builders/gcloud'
-#   args: ['app', 'deploy', '--project', '$PROJECT_ID', '-q', '$_GAE_PROMOTE', '-v', '$_GAE_VERSION']
-# - name: 'gcr.io/cloud-builders/gcloud'
-#   args: ['app', 'services', '--project', '$PROJECT_ID', 'set-traffic', '--splits', '$_GAE_TRAFFIC']
-

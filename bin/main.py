@@ -3,7 +3,7 @@ import io
 # from dotenv import load_dotenv
 import subprocess
 # https://www.datacamp.com/tutorial/python-subprocess
-import pandas as pd
+# import pandas as pd
 from flask import Flask, request, render_template
 import google.cloud.logging
 from google.cloud import bigquery

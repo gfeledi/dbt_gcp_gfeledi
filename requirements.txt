@@ -1,4 +1,3 @@
-pandas
 Flask
 json2html
 sendgrid
