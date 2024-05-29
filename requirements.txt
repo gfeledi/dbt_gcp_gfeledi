@@ -5,3 +5,4 @@ sendgrid
 google.cloud.logging
 dbt-core 
 dbt-bigquery
+gunicorn
