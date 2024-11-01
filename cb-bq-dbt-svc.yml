@@ -9,7 +9,8 @@ steps:
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['run', 'deploy', '${_SERVICE}', '--image', '${_REPO}/${_IMAGE}', '--region', '${_REGION}', '--platform', 'managed', '--port', '8080', '--cpu', '1', '--memory', '512Mi', '--concurrency', '1', '--service-account', '${_SA_ID}', '--no-allow-unauthenticated', 
-          '--set-env-vars', 'TO_EMAILS=_TO_EMAILS', '--set-env-vars', 'SENDGRID_API_KEY=_SENDGRID_API_KEY', '--set-env-vars', 'GS_DATALAKE=_GS_DATALAKE', '--set-env-vars', 'GS_ZIP=_GS_ZIP']
+          '--set-env-vars', 'TO_EMAILS=_TO_EMAILS', '--set-env-vars', '--set-env-vars', 'GS_DATALAKE=_GS_DATALAKE', '--set-env-vars', 'GS_ZIP=_GS_ZIP']
+    secretEnv: ['SENDGRID_API_KEY']
   - id: 'policy-binding'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
@@ -18,11 +19,15 @@ steps:
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['workflows', 'deploy', '${_WORKFLOW}', '--source', '${_WF_SOURCE}', '--location', '${_REGION}', '--service-account', '${_WF_SA}', '--description', 'load & dbt workflow', '--call-log-level', 'log-errors-only', '--set-env-vars', 'RUN_SERVICE_URL=${_WF_SERVICE_URL}']
-  - id: 'workflow-trigger'
-    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args: ['eventarc', 'triggers', 'create', '${_WF_TRIGGER}', '--location', '${_REGION}', '--destination-workflow', '${_WORKFLOW}', '--destination-workflow-location', '${_REGION}', '--service-account', '${_WF_SA}', '--event-filters', 'type=google.cloud.storage.object.v1.finalized', '--event-filters', 'bucket=${_WF_TRIGGER_BUCKET}' ]
+  # - id: 'workflow-trigger'
+  #   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   entrypoint: gcloud
+  #   args: ['eventarc', 'triggers', 'create', '${_WF_TRIGGER}', '--location', '${_REGION}', '--destination-workflow', '${_WORKFLOW}', '--destination-workflow-location', '${_REGION}', '--service-account', '${_WF_SA}', '--event-filters', 'type=google.cloud.storage.object.v1.finalized', '--event-filters', 'bucket=${_WF_TRIGGER_BUCKET}' ]
 images:
   - '${_REPO}/${_IMAGE}'
 options:
   logging: CLOUD_LOGGING_ONLY
+availableSecrets:
+  secretManager:
+  - versionName: ${_SENDGRID_API_KEY} 
+    env: 'SENDGRID_API_KEY'
