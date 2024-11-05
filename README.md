@@ -4,8 +4,8 @@ DataLake - DWH - DataMarts for Bike Rent traffic
 
 ## Description
 
-arriving 2 data types: rides.csv & pass_purchases.csv
-resulting Data marts, analytics by different departments
+arriving 2 data types: rides.csv & pass_purchases.csv  
+resulting Data marts, analytics by different departments  
 
 ## Getting Started
 
@@ -47,7 +47,7 @@ command to run if program contains helper info
 
 Contributors names and contact info
 
-Gyorgy Feledi 
+Gyorgy Feledi   
 gfeledi@gmail.com
 
 ## Version History
