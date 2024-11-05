@@ -21,6 +21,7 @@ engine on GCP, user access through customer website
       - running dbt in Cloud Run on arriving data
       - email notif on results 
   - Service with GKE or external Load Balancer 
+    - Cloud DNS to map to customer website
 - dbt to make data flow
   - DataLake taking raw input files
   - DWH a BiqQuery DataSet with tables on system status
