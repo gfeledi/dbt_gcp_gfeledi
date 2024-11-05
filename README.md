@@ -16,7 +16,10 @@ engine on GCP, user access through customer website
   - github repo linked to local
   - GCP artifact repo triggered from github
   - cloud build based on GCP artifact repo
-  - Deployment as Cloud Run service
+    - Deployment dbt image as Cloud Run service
+    - Workflows 
+      - running dbt in Cloud Run on arriving data
+      - email notif on results 
   - Service with GKE or external Load Balancer 
 - dbt to make data flow
   - DataLake taking raw input files
